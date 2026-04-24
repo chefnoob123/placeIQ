@@ -10,18 +10,18 @@
 <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 <style>
   :root {
-    --bg: #07080d;
-    --surface: #0d0f1a;
-    --surface2: #131629;
-    --border: rgba(99,102,241,0.18);
-    --accent: #6366f1;
-    --accent2: #22d3ee;
-    --accent3: #f59e0b;
-    --accent4: #10b981;
-    --accent5: #f43f5e;
-    --text: #e8eaf6;
-    --muted: #6b7280;
-    --card-glow: 0 0 40px rgba(99,102,241,0.08);
+    --bg: #f8fafc; /* Bright Slate Background */
+    --surface: #ffffff;
+    --surface2: #f1f5f9;
+    --border: rgba(99, 102, 241, 0.12);
+    --accent: #4f46e5; /* Deeper Indigo for light mode */
+    --accent2: #0891b2; /* Deeper Cyan */
+    --accent3: #d97706; /* Darker Amber */
+    --accent4: #059669; /* Darker Emerald */
+    --accent5: #e11d48; /* Darker Rose */
+    --text: #1e293b; /* Slate 800 */
+    --muted: #64748b; /* Slate 500 */
+    --card-glow: 0 4px 20px rgba(0, 0, 0, 0.04);
     --font-display: 'Syne', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
     --font-body: 'Inter', sans-serif;
@@ -39,11 +39,13 @@
     overflow-x: hidden;
   }
 
-  /* ── Noise texture overlay ── */
+  /* ── Subtle Dot Pattern for Light Mode ── */
   body::before {
     content: '';
     position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    background-image: radial-gradient(#cbd5e1 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+    opacity: 0.3;
     pointer-events: none;
     z-index: 0;
   }
@@ -51,8 +53,8 @@
   /* ── HEADER ── */
   header {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(7,8,13,0.85);
-    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     padding: 0 2rem;
     display: flex; align-items: center; justify-content: space-between;
@@ -65,6 +67,7 @@
     font-weight: 800;
     letter-spacing: -0.03em;
     display: flex; align-items: center; gap: 0.5rem;
+    color: var(--text);
   }
   .logo span { color: var(--accent); }
   .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent4); animation: pulse 2s ease infinite; }
@@ -78,12 +81,12 @@
 
   .live-badge {
     display: flex; align-items: center; gap: 0.4rem;
-    background: rgba(16,185,129,0.12);
-    border: 1px solid rgba(16,185,129,0.3);
+    background: #ecfdf5;
+    border: 1px solid #10b98144;
     color: var(--accent4);
     font-family: var(--font-mono);
     font-size: 0.7rem;
-    font-weight: 500;
+    font-weight: 600;
     padding: 0.3rem 0.75rem;
     border-radius: 100px;
     text-transform: uppercase;
@@ -95,6 +98,7 @@
     font-family: var(--font-mono);
     font-size: 0.65rem;
     color: var(--muted);
+    background: var(--surface2);
     border: 1px solid var(--border);
     padding: 0.25rem 0.6rem;
     border-radius: 4px;
@@ -103,8 +107,8 @@
   #event-counter {
     font-family: var(--font-mono);
     font-size: 0.8rem;
-    color: var(--accent2);
-    letter-spacing: 0.05em;
+    color: var(--accent);
+    font-weight: 600;
   }
 
   /* ── MAIN LAYOUT ── */
@@ -140,17 +144,18 @@
     padding: 1.2rem 1.4rem;
     position: relative;
     overflow: hidden;
-    transition: transform 0.2s, border-color 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
     cursor: default;
+    box-shadow: var(--card-glow);
   }
   .kpi-card::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0;
-    height: 2px;
+    height: 3px;
     background: var(--card-accent, var(--accent));
     border-radius: 12px 12px 0 0;
   }
-  .kpi-card:hover { transform: translateY(-2px); border-color: rgba(99,102,241,0.35); }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
 
   .kpi-label {
     font-size: 0.7rem;
@@ -167,6 +172,7 @@
     letter-spacing: -0.03em;
     line-height: 1;
     transition: color 0.3s;
+    color: var(--text);
   }
   .kpi-sub {
     font-size: 0.7rem;
@@ -178,20 +184,20 @@
   .chart-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
   }
   .chart-grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
   }
   .chart-grid-3 {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .card {
@@ -215,8 +221,8 @@
     font-family: var(--font-mono);
     font-size: 0.6rem;
     color: var(--accent);
-    background: rgba(99,102,241,0.1);
-    border: 1px solid rgba(99,102,241,0.2);
+    background: rgba(79, 70, 229, 0.08);
+    border: 1px solid rgba(79, 70, 229, 0.15);
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
     text-transform: uppercase;
@@ -235,13 +241,13 @@
     max-height: 420px;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    scrollbar-color: #cbd5e1 transparent;
   }
 
   .feed-item {
     display: flex; align-items: center; gap: 0.8rem;
     padding: 0.75rem 0;
-    border-bottom: 1px solid rgba(99,102,241,0.08);
+    border-bottom: 1px solid #f1f5f9;
     animation: slideIn 0.3s ease;
     font-size: 0.8rem;
   }
@@ -256,7 +262,7 @@
     border-radius: 4px;
     font-family: var(--font-mono);
     font-size: 0.6rem;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     min-width: 76px;
@@ -264,17 +270,17 @@
     flex-shrink: 0;
   }
 
-  .feed-type.offered   { background: rgba(16,185,129,0.15);  color: #10b981; }
-  .feed-type.accepted  { background: rgba(99,102,241,0.15);  color: #818cf8; }
-  .feed-type.rejected  { background: rgba(244,63,94,0.15);   color: #f43f5e; }
-  .feed-type.applied   { background: rgba(34,211,238,0.12);  color: #22d3ee; }
-  .feed-type.shortlisted { background: rgba(245,158,11,0.15); color: #f59e0b; }
-  .feed-type.interviewed { background: rgba(168,85,247,0.15); color: #a855f7; }
+  .feed-type.offered   { background: #dcfce7; color: #15803d; }
+  .feed-type.accepted  { background: #e0e7ff; color: #4338ca; }
+  .feed-type.rejected  { background: #ffe4e6; color: #be123c; }
+  .feed-type.applied   { background: #ecfeff; color: #0e7490; }
+  .feed-type.shortlisted { background: #fef3c7; color: #b45309; }
+  .feed-type.interviewed { background: #f3e8ff; color: #7e22ce; }
 
-  .feed-info { flex: 1; line-height: 1.5; }
-  .feed-student { font-weight: 500; color: var(--text); }
+  .feed-info { flex: 1; line-height: 1.5; color: var(--text); }
+  .feed-student { font-weight: 600; color: var(--text); }
   .feed-company { color: var(--muted); }
-  .feed-salary { font-family: var(--font-mono); color: var(--accent4); font-size: 0.75rem; flex-shrink: 0; }
+  .feed-salary { font-family: var(--font-mono); color: var(--accent4); font-weight: 600; font-size: 0.75rem; flex-shrink: 0; }
   .feed-time { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted); flex-shrink: 0; }
 
   /* ── SKILL BARS ── */
@@ -301,22 +307,23 @@
     color: var(--muted);
     text-align: left;
     padding: 0 0.5rem 0.6rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid var(--surface2);
   }
   .branch-table td {
     font-size: 0.78rem;
     padding: 0.55rem 0.5rem;
-    border-bottom: 1px solid rgba(99,102,241,0.06);
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--text);
   }
   .branch-table tr:last-child td { border-bottom: none; }
   .rate-bar-wrap { display: flex; align-items: center; gap: 0.5rem; }
   .rate-bar { height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--accent4), var(--accent2)); min-width: 4px; transition: width 0.6s ease; }
-  .rate-val { font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent4); }
+  .rate-val { font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent4); font-weight: 600; }
 
   /* ── STATUS BAR at bottom ── */
   .status-bar {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(7,8,13,0.9);
+    background: rgba(255, 255, 255, 0.9);
     border-top: 1px solid var(--border);
     backdrop-filter: blur(12px);
     height: 32px;
@@ -347,7 +354,6 @@
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
@@ -360,55 +366,52 @@
   </div>
 </header>
 
-<!-- MAIN -->
 <main>
 
-  <!-- KPI STRIP -->
   <p class="section-title">Key Metrics · Live</p>
   <div class="kpi-grid">
-    <div class="kpi-card" style="--card-accent: #22d3ee">
+    <div class="kpi-card" style="--card-accent: #0891b2">
       <div class="kpi-label">Total Applied</div>
-      <div class="kpi-value" id="kpi-applied" style="color:#22d3ee">0</div>
+      <div class="kpi-value" id="kpi-applied" style="color:#0891b2">0</div>
       <div class="kpi-sub">Applications received</div>
     </div>
-    <div class="kpi-card" style="--card-accent: #f59e0b">
+    <div class="kpi-card" style="--card-accent: #d97706">
       <div class="kpi-label">Shortlisted</div>
-      <div class="kpi-value" id="kpi-shortlisted" style="color:#f59e0b">0</div>
+      <div class="kpi-value" id="kpi-shortlisted" style="color:#d97706">0</div>
       <div class="kpi-sub">Cleared screening</div>
     </div>
-    <div class="kpi-card" style="--card-accent: #a855f7">
+    <div class="kpi-card" style="--card-accent: #7e22ce">
       <div class="kpi-label">Interviewed</div>
-      <div class="kpi-value" id="kpi-interviewed" style="color:#a855f7">0</div>
+      <div class="kpi-value" id="kpi-interviewed" style="color:#7e22ce">0</div>
       <div class="kpi-sub">Completed rounds</div>
     </div>
-    <div class="kpi-card" style="--card-accent: #6366f1">
+    <div class="kpi-card" style="--card-accent: #4f46e5">
       <div class="kpi-label">Offers Made</div>
-      <div class="kpi-value" id="kpi-offers" style="color:#6366f1">0</div>
+      <div class="kpi-value" id="kpi-offers" style="color:#4f46e5">0</div>
       <div class="kpi-sub">Placement offers</div>
     </div>
-    <div class="kpi-card" style="--card-accent: #10b981">
+    <div class="kpi-card" style="--card-accent: #059669">
       <div class="kpi-label">Accepted</div>
-      <div class="kpi-value" id="kpi-accepted" style="color:#10b981">0</div>
+      <div class="kpi-value" id="kpi-accepted" style="color:#059669">0</div>
       <div class="kpi-sub">Offers confirmed</div>
     </div>
-    <div class="kpi-card" style="--card-accent: #f43f5e">
+    <div class="kpi-card" style="--card-accent: #be123c">
       <div class="kpi-label">Rejected</div>
-      <div class="kpi-value" id="kpi-rejected" style="color:#f43f5e">0</div>
+      <div class="kpi-value" id="kpi-rejected" style="color:#be123c">0</div>
       <div class="kpi-sub">Offers declined</div>
     </div>
-    <div class="kpi-card" style="--card-accent: #10b981">
+    <div class="kpi-card" style="--card-accent: #059669">
       <div class="kpi-label">Avg Package</div>
-      <div class="kpi-value" id="kpi-avg-sal" style="color:#10b981; font-size:1.5rem">₹0L</div>
+      <div class="kpi-value" id="kpi-avg-sal" style="color:#059669; font-size:1.5rem">₹0L</div>
       <div class="kpi-sub">per annum</div>
     </div>
-    <div class="kpi-card" style="--card-accent: #f59e0b">
+    <div class="kpi-card" style="--card-accent: #d97706">
       <div class="kpi-label">Max Package</div>
-      <div class="kpi-value" id="kpi-max-sal" style="color:#f59e0b; font-size:1.5rem">₹0L</div>
+      <div class="kpi-value" id="kpi-max-sal" style="color:#d97706; font-size:1.5rem">₹0L</div>
       <div class="kpi-sub">highest offer</div>
     </div>
   </div>
 
-  <!-- ROW 1: Line chart + Donut + Bar -->
   <div class="chart-grid">
     <div class="card">
       <div class="card-header">
@@ -439,7 +442,6 @@
     </div>
   </div>
 
-  <!-- ROW 2: Scatter + Branch bar -->
   <div class="chart-grid-2">
     <div class="card">
       <div class="card-header">
@@ -461,7 +463,6 @@
     </div>
   </div>
 
-  <!-- ROW 3: Top companies + Feed -->
   <div class="chart-grid-3">
     <div class="card">
       <div class="card-header">
@@ -481,7 +482,6 @@
     </div>
   </div>
 
-  <!-- ROW 4: Skill demand + Branch placement rate table + Gender -->
   <div class="chart-grid">
     <div class="card">
       <div class="card-header">
@@ -502,7 +502,7 @@
             <th>Applied</th>
             <th>Offered</th>
             <th>Rate</th>
-          </tr>
+          }
         </thead>
         <tbody id="branch-table-body"></tbody>
       </table>
@@ -520,7 +520,6 @@
 
 </main>
 
-<!-- STATUS BAR -->
 <div class="status-bar">
   <div class="status-item"><span class="status-ok">●</span> Kafka Connected</div>
   <div class="status-item"><span class="status-ok">●</span> Consumer Active</div>
@@ -530,17 +529,19 @@
 
 <script>
 // ── Chart.js global defaults ───────────────────────────────────────────────
-Chart.defaults.color = '#6b7280';
+// (Updated for Light Mode visibility)
+Chart.defaults.color = '#64748b'; 
 Chart.defaults.font.family = "'JetBrains Mono', monospace";
 Chart.defaults.font.size = 10;
 
-const ACCENT  = '#6366f1';
-const CYAN    = '#22d3ee';
-const AMBER   = '#f59e0b';
-const GREEN   = '#10b981';
-const ROSE    = '#f43f5e';
-const PURPLE  = '#a855f7';
-const PALETTE = [ACCENT, CYAN, AMBER, GREEN, ROSE, PURPLE, '#fb923c', '#e879f9', '#34d399', '#60a5fa'];
+// (Accents made slightly deeper for bright background contrast)
+const ACCENT  = '#4f46e5'; 
+const CYAN    = '#0891b2'; 
+const AMBER   = '#d97706';
+const GREEN   = '#059669';
+const ROSE    = '#e11d48';
+const PURPLE  = '#7e22ce';
+const PALETTE = [ACCENT, CYAN, AMBER, GREEN, ROSE, PURPLE, '#f97316', '#db2777', '#10b981', '#3b82f6'];
 
 function makeGrad(ctx, c1, c2) {
   const g = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
@@ -555,7 +556,7 @@ const timeChart = new Chart(timeCtx, {
     label: 'Events',
     data: [],
     borderColor: CYAN,
-    backgroundColor: 'rgba(34,211,238,0.08)',
+    backgroundColor: 'rgba(8,145,178,0.06)', 
     borderWidth: 2,
     tension: 0.4,
     fill: true,
@@ -577,7 +578,7 @@ const timeChart = new Chart(timeCtx, {
 const donutCtx = document.getElementById('eventDonut').getContext('2d');
 const eventDonut = new Chart(donutCtx, {
   type: 'doughnut',
-  data: { labels: [], datasets: [{ data: [], backgroundColor: PALETTE, borderWidth: 0, hoverOffset: 6 }] },
+  data: { labels: [], datasets: [{ data: [], backgroundColor: PALETTE, borderWidth: 2, borderColor: '#ffffff', hoverOffset: 6 }] },
   options: {
     responsive: true, maintainAspectRatio: false,
     cutout: '70%',
@@ -612,7 +613,7 @@ const scatterChart = new Chart(scatterCtx, {
   data: { datasets: [{
     label: 'Students',
     data: [],
-    backgroundColor: 'rgba(99,102,241,0.5)',
+    backgroundColor: 'rgba(79,70,229,0.6)', 
     pointRadius: 5,
     pointHoverRadius: 7,
   }]},
@@ -622,8 +623,8 @@ const scatterChart = new Chart(scatterCtx, {
       callbacks: { label: ctx => `CGPA: ${ctx.parsed.x} | ₹${ctx.parsed.y}L` }
     }},
     scales: {
-      x: { title: { display: true, text: 'CGPA', color: '#6b7280' }, grid: { color: 'rgba(99,102,241,0.06)' } },
-      y: { title: { display: true, text: 'Package (LPA)', color: '#6b7280' }, grid: { color: 'rgba(99,102,241,0.06)' } }
+      x: { title: { display: true, text: 'CGPA', color: '#64748b' }, grid: { color: 'rgba(99,102,241,0.06)' } },
+      y: { title: { display: true, text: 'Package (LPA)', color: '#64748b' }, grid: { color: 'rgba(99,102,241,0.06)' } }
     }
   }
 });
@@ -674,7 +675,7 @@ const companyChart = new Chart(companyCtx, {
 const genderCtx = document.getElementById('genderChart').getContext('2d');
 const genderChart = new Chart(genderCtx, {
   type: 'pie',
-  data: { labels: [], datasets: [{ data: [], backgroundColor: [ACCENT, CYAN, AMBER], borderWidth: 0 }] },
+  data: { labels: [], datasets: [{ data: [], backgroundColor: [ACCENT, CYAN, AMBER], borderWidth: 2, borderColor: '#ffffff' }] },
   options: {
     responsive: true, maintainAspectRatio: false,
     plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14 } } }
@@ -694,12 +695,12 @@ function fmt(n) { return n != null ? `₹${parseFloat(n).toFixed(1)}L` : '—'; 
 
 function updateKPIs(d) {
   const fields = [
-    ['kpi-applied',     d.total_applied],
+    ['kpi-applied',      d.total_applied],
     ['kpi-shortlisted', d.total_shortlisted],
     ['kpi-interviewed', d.total_interviewed],
-    ['kpi-offers',      d.total_offers],
-    ['kpi-accepted',    d.total_accepted],
-    ['kpi-rejected',    d.total_rejected],
+    ['kpi-offers',       d.total_offers],
+    ['kpi-accepted',     d.total_accepted],
+    ['kpi-rejected',     d.total_rejected],
   ];
   fields.forEach(([id, val]) => {
     const el = document.getElementById(id);
