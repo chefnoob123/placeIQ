@@ -199,4 +199,3 @@ Edit `docker-compose.yml` to change:
 
 ---
 
-*Built with ❤️ for Big Data Analytics AAT*
