@@ -188,14 +188,5 @@ Edit `docker-compose.yml` to change:
 - Exposed ports for any service
 - Producer event frequency (edit `producer.py` — `time.sleep(...)`)
 
----
 
-## 🎓 AAT Information
-
-- **Subject:** Big Data Analytics
-- **Topic:** Real-Time Campus Placement Analytics System
-- **Integration:** Apache Kafka ↔ Flask Analytics Engine
-- **Key Concept:** Event streaming architecture with real-time aggregation
-
----
 
